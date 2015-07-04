@@ -1,13 +1,15 @@
 __author__ = 'ereid'
 
+from Debug import *
 
 class Actor:
 
     name = ""
-    holdings = []
-    vassals = []
+    provinces = {}
+    holdings = {}
+    vassals = {}
     superior = None
-    actions = []
+    actions = {}
     num_actions = 1
 
     def __init__(self, name):

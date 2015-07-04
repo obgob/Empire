@@ -1,40 +1,49 @@
 __author__ = 'ereid'
 
-import random, Actor
+from Debug import *
+import random
+from Actor import Actor
 
 class Holding:
 
-    def __init__(self, name, location, owner):
+    BASE_CHANCE = 50
+    MAX_LEVEL = 10
+
+    def __init__(self, name, owner=Actor):
         self.name = name
-        self.location = location
-        self._level = 1
+        self.level = 0
         self.value = 0
+        self.owner = owner
 
     def change_name(self, new_name):
         self.name = new_name
 
-    @property
-    def level(self):
-        print "get test"
-        return self._level
-
-    @level.setter
-    def level(self, value):
-        print "set test"
-        if value == -1:
-            if self._level == 0:
-                print "Error: Holding level cannot go below 0"
-            self._level -= 1
-        elif value == 1:
-            self._level += 1
-        else:
-            print "Error: Holding level can only change by +/-1"
-
-    def change_owner(self, new_owner=Actor.Actor("Unknown")):
+    def change_owner(self, new_owner=Actor):
         self.owner.holdings.remove(self)
         new_owner.holdings.add(self)
         self.owner = new_owner
 
-holding = Holding("test", "England", Actor.Actor("Tom Riddle"))
+    def upgrade_holding(self):
+        if self.level < self.MAX_LEVEL:
+            random.seed()
+            random_num = random.randrange(0, 100)
 
-print holding.level
+            if random_num >= self.BASE_CHANCE:
+                self.level += 1
+                debug(self.owner.name + " successfully upgraded " + self.name + " to level " + self.level.__str__(),
+                      DEBUG_LEVEL_MEDIUM)
+            else:
+                debug(self.owner.name + " failed to upgrade " + self.name, DEBUG_LEVEL_MEDIUM)
+        else:
+            debug("Cannot upgrade " + self.name + " further", 1)
+
+    def downgrade_holding(self):
+        if self.level > 0:
+            self.level -= 1
+
+class Province:
+    holdings = {}
+
+    def __init__(self, name, owner=Actor):
+        self.name = name
+        self.owner = owner
